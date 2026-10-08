@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-localize-seed-repair-orders
+      author: student
+      changes:
+        - update:
+            tableName: repair_orders
+            columns:
+              - column: { name: customer_name, value: "Олександр Жижик" }
+              - column: { name: car_brand, value: "Land Rover" }
+              - column: { name: car_model, value: "DEFENDER 90" }
+              - column: { name: issue_description, value: "Діагностика двигуна заміна масла" }
+            where: license_plate = 'AA1234BB'
+        - update:
+            tableName: repair_orders
+            columns:
+              - column: { name: customer_name, value: "Ірина Поштар" }
+              - column: { name: issue_description, value: "Диски гальмівні під заміну" }
+            where: license_plate = 'BC7788CE'

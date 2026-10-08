@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Заявки | Автосервіс</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <div>
+        <div class="brand">МАЙСТЕРНЯ</div>
+        <div class="subtitle">Керування ремонтами</div>
+    </div>
+    <div class="account">
+        <span th:text="${username}">user</span>
+        <form th:action="@{/logout}" method="post"><button class="icon-button" type="submit" title="Вийти">&#x21AA;</button></form>
+    </div>
+</header>
+
+<main>
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">РОБОЧИЙ ЖУРНАЛ</p>
+            <h1>Заявки на ремонт</h1>
+        </div>
+        <a sec:authorize="hasAnyRole('MANAGER','ADMIN')" class="button primary" th:href="@{/orders/new}">+ Нова заявка</a>
+    </section>
+
+    <div class="notice" th:if="${message}" th:text="${message}"></div>
+
+    <section class="table-shell">
+        <table>
+            <thead>
+            <tr><th>#</th><th>Клієнт</th><th>Автомобіль</th><th>Номер</th><th>Несправність</th><th>Статус</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.id}"></td>
+                <td><strong th:text="${order.customerName}"></strong><small th:text="${order.phone}"></small></td>
+                <td th:text="${order.carBrand + ' ' + order.carModel}"></td>
+                <td><span class="plate" th:text="${order.licensePlate}"></span></td>
+                <td class="issue" th:text="${order.issueDescription}"></td>
+                <td><span class="status" th:classappend="${' status-' + #strings.toLowerCase(order.status.name())}" th:text="${order.status}"></span></td>
+                <td class="actions">
+                    <a sec:authorize="hasAnyRole('MANAGER','ADMIN')" class="icon-button" th:href="@{/orders/{id}/edit(id=${order.id})}" title="Редагувати">&#9998;</a>
+                    <form sec:authorize="hasRole('ADMIN')" th:action="@{/admin/orders/{id}/delete(id=${order.id})}" method="post" onsubmit="return confirm('Видалити заявку?')">
+                        <button class="icon-button danger" type="submit" title="Видалити">&#128465;</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(orders)}"><td class="empty" colspan="7">Заявок поки немає</td></tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

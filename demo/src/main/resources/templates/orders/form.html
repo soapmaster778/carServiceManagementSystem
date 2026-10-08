@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="uk" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${order.id == null ? 'Нова заявка' : 'Редагування заявки'}">Заявка</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar"><div><div class="brand">МАЙСТЕРНЯ</div><div class="subtitle">Керування ремонтами</div></div></header>
+<main class="form-page">
+    <a class="back-link" th:href="@{/orders}">&larr; До журналу</a>
+    <section class="form-heading">
+        <p class="eyebrow">ЗАЯВКА НА РЕМОНТ</p>
+        <h1 th:text="${order.id == null ? 'Прийняти автомобіль' : 'Оновити заявку'}"></h1>
+    </section>
+    <form class="order-form" th:object="${order}" th:action="${order.id == null ? '/orders' : '/orders/' + order.id}" method="post">
+        <input type="hidden" th:field="*{id}">
+        <div class="form-grid">
+            <label>Клієнт<input th:field="*{customerName}" maxlength="100" required><span th:errors="*{customerName}"></span></label>
+            <label>Телефон<input th:field="*{phone}" maxlength="30" required><span th:errors="*{phone}"></span></label>
+            <label>Марка<input th:field="*{carBrand}" maxlength="60" required><span th:errors="*{carBrand}"></span></label>
+            <label>Модель<input th:field="*{carModel}" maxlength="60" required><span th:errors="*{carModel}"></span></label>
+            <label>Державний номер<input th:field="*{licensePlate}" maxlength="20" required><span th:errors="*{licensePlate}"></span></label>
+            <label>Статус<select th:field="*{status}"><option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option></select></label>
+            <label class="full">Опис несправності<textarea th:field="*{issueDescription}" rows="5" maxlength="1000" required></textarea><span th:errors="*{issueDescription}"></span></label>
+        </div>
+        <div class="form-actions"><a class="button secondary" th:href="@{/orders}">Скасувати</a><button class="button primary" type="submit">Зберегти</button></div>
+    </form>
+</main>
+</body>
+</html>

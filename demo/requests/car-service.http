@@ -1,0 +1,68 @@
+### Obtain MANAGER JWT
+POST http://localhost:8082/realms/car-service/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=car-service-api&username=manager&password=manager123&grant_type=password
+
+> {% client.global.set("manager_token", response.body.access_token); %}
+
+### Obtain ADMIN JWT
+POST http://localhost:8082/realms/car-service/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=car-service-api&username=admin&password=admin123&grant_type=password
+
+> {% client.global.set("admin_token", response.body.access_token); %}
+
+### 401: request without JWT
+GET http://localhost:8080/api/repair-orders
+
+### List orders as MANAGER
+GET http://localhost:8080/api/repair-orders
+Authorization: Bearer {{manager_token}}
+
+### Create order as MANAGER
+POST http://localhost:8080/api/repair-orders
+Authorization: Bearer {{manager_token}}
+Content-Type: application/json
+
+{
+  "customerName": "Taras Bondar",
+  "phone": "+380931234567",
+  "carBrand": "Ford",
+  "carModel": "Focus",
+  "licensePlate": "KA4455IT",
+  "issueDescription": "Air conditioner diagnostics",
+  "status": "NEW"
+}
+
+### Update order as MANAGER
+PUT http://localhost:8080/api/repair-orders/1
+Authorization: Bearer {{manager_token}}
+Content-Type: application/json
+
+{
+  "customerName": "Oleksandr Kovalenko",
+  "phone": "+380501112233",
+  "carBrand": "Toyota",
+  "carModel": "Corolla",
+  "licensePlate": "AA1234BB",
+  "issueDescription": "Engine diagnostics and oil change",
+  "status": "COMPLETED"
+}
+
+### 403 from SecurityFilterChain for MANAGER
+GET http://localhost:8080/api/admin/status
+Authorization: Bearer {{manager_token}}
+
+### 403 from @PreAuthorize for MANAGER
+DELETE http://localhost:8080/api/repair-orders/1
+Authorization: Bearer {{manager_token}}
+
+### ADMIN endpoint succeeds
+GET http://localhost:8080/api/admin/status
+Authorization: Bearer {{admin_token}}
+
+### Delete as ADMIN
+DELETE http://localhost:8080/api/repair-orders/2
+Authorization: Bearer {{admin_token}}

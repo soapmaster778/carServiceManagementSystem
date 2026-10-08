@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-repair-orders
+      author: student
+      changes:
+        - createTable:
+            tableName: repair_orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: customer_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: car_brand
+                  type: VARCHAR(60)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: car_model
+                  type: VARCHAR(60)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: license_plate
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: issue_description
+                  type: VARCHAR(1000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false

@@ -1,0 +1,164 @@
+{
+  "info": {
+    "_postman_id": "b4a9de9a-08d7-4e70-bb6c-caa84563130f",
+    "name": "Car Service Management API",
+    "description": "OIDC/JWT scenarios for the Spring Security laboratory work. Run the token requests first; their test scripts save access tokens automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "app_url", "value": "http://localhost:8080" },
+    { "key": "keycloak_url", "value": "http://localhost:8082" },
+    { "key": "realm", "value": "car-service" },
+    { "key": "manager_token", "value": "" },
+    { "key": "admin_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Obtain MANAGER JWT",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Token received', () => pm.response.to.have.status(200));",
+                "pm.collectionVariables.set('manager_token', pm.response.json().access_token);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id", "value": "car-service-api", "type": "text" },
+                { "key": "username", "value": "manager", "type": "text" },
+                { "key": "password", "value": "manager123", "type": "text" },
+                { "key": "grant_type", "value": "password", "type": "text" }
+              ]
+            },
+            "url": "{{keycloak_url}}/realms/{{realm}}/protocol/openid-connect/token"
+          }
+        },
+        {
+          "name": "Obtain ADMIN JWT",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Token received', () => pm.response.to.have.status(200));",
+                "pm.collectionVariables.set('admin_token', pm.response.json().access_token);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "client_id", "value": "car-service-api", "type": "text" },
+                { "key": "username", "value": "admin", "type": "text" },
+                { "key": "password", "value": "admin123", "type": "text" },
+                { "key": "grant_type", "value": "password", "type": "text" }
+              ]
+            },
+            "url": "{{keycloak_url}}/realms/{{realm}}/protocol/openid-connect/token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Repair Orders CRUD",
+      "item": [
+        {
+          "name": "401 - List without JWT",
+          "request": { "method": "GET", "url": "{{app_url}}/api/repair-orders" }
+        },
+        {
+          "name": "List orders as MANAGER",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{manager_token}}", "type": "string" }] },
+            "url": "{{app_url}}/api/repair-orders"
+          }
+        },
+        {
+          "name": "Get order by ID",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{manager_token}}", "type": "string" }] },
+            "url": "{{app_url}}/api/repair-orders/1"
+          }
+        },
+        {
+          "name": "Create order as MANAGER",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{manager_token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Taras Bondar\",\n  \"phone\": \"+380931234567\",\n  \"carBrand\": \"Ford\",\n  \"carModel\": \"Focus\",\n  \"licensePlate\": \"KA4455IT\",\n  \"issueDescription\": \"Air conditioner diagnostics\",\n  \"status\": \"NEW\"\n}"
+            },
+            "url": "{{app_url}}/api/repair-orders"
+          }
+        },
+        {
+          "name": "Update order as MANAGER",
+          "request": {
+            "method": "PUT",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{manager_token}}", "type": "string" }] },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"Oleksandr Kovalenko\",\n  \"phone\": \"+380501112233\",\n  \"carBrand\": \"Toyota\",\n  \"carModel\": \"Corolla\",\n  \"licensePlate\": \"AA1234BB\",\n  \"issueDescription\": \"Engine diagnostics and oil change\",\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": "{{app_url}}/api/repair-orders/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authorization checks",
+      "item": [
+        {
+          "name": "403 - MANAGER blocked by SecurityFilterChain",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{manager_token}}", "type": "string" }] },
+            "url": "{{app_url}}/api/admin/status"
+          }
+        },
+        {
+          "name": "403 - MANAGER blocked by @PreAuthorize",
+          "request": {
+            "method": "DELETE",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{manager_token}}", "type": "string" }] },
+            "url": "{{app_url}}/api/repair-orders/1"
+          }
+        },
+        {
+          "name": "ADMIN endpoint succeeds",
+          "request": {
+            "method": "GET",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+            "url": "{{app_url}}/api/admin/status"
+          }
+        },
+        {
+          "name": "Delete order as ADMIN",
+          "request": {
+            "method": "DELETE",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+            "url": "{{app_url}}/api/repair-orders/2"
+          }
+        }
+      ]
+    }
+  ]
+}

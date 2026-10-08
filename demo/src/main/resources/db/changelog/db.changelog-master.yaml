@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/001-create-repair-orders.yaml
+  - include:
+      file: db/changelog/changes/002-seed-repair-orders.yaml
+  - include:
+      file: db/changelog/changes/003-localize-seed-repair-orders.yaml

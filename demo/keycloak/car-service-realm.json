@@ -1,0 +1,78 @@
+{
+  "realm": "car-service",
+  "enabled": true,
+  "displayName": "Car Service",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "roles": { "realm": [
+    { "name": "MANAGER", "description": "Can manage repair orders" },
+    { "name": "ADMIN", "description": "Can manage and delete repair orders" }
+  ]},
+  "clients": [
+    {
+      "clientId": "car-service-ui",
+      "name": "Car Service Web UI",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "car-service-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:8080/login/oauth2/code/keycloak"],
+      "webOrigins": ["http://localhost:8080"],
+      "protocolMappers": [{
+        "name": "realm roles",
+        "protocol": "openid-connect",
+        "protocolMapper": "oidc-usermodel-realm-role-mapper",
+        "config": {
+          "multivalued": "true",
+          "userinfo.token.claim": "true",
+          "id.token.claim": "true",
+          "access.token.claim": "true",
+          "claim.name": "realm_access.roles",
+          "jsonType.label": "String"
+        }
+      }]
+    },
+    {
+      "clientId": "car-service-api",
+      "name": "Car Service API testing client",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "protocolMappers": [{
+        "name": "realm roles",
+        "protocol": "openid-connect",
+        "protocolMapper": "oidc-usermodel-realm-role-mapper",
+        "config": {
+          "multivalued": "true",
+          "access.token.claim": "true",
+          "claim.name": "realm_access.roles",
+          "jsonType.label": "String"
+        }
+      }]
+    }
+  ],
+  "users": [
+    {
+      "username": "manager",
+      "firstName": "Service",
+      "lastName": "Manager",
+      "email": "manager@carservice.local",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "manager123", "temporary": false }],
+      "realmRoles": ["MANAGER"]
+    },
+    {
+      "username": "admin",
+      "firstName": "System",
+      "lastName": "Administrator",
+      "email": "admin@carservice.local",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "admin123", "temporary": false }],
+      "realmRoles": ["MANAGER", "ADMIN"]
+    }
+  ]
+}

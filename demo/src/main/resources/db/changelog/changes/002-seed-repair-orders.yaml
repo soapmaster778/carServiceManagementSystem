@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-seed-repair-orders
+      author: student
+      changes:
+        - insert:
+            tableName: repair_orders
+            columns:
+              - column: { name: customer_name, value: "Oleksandr Kovalenko" }
+              - column: { name: phone, value: "+380501112233" }
+              - column: { name: car_brand, value: "Toyota" }
+              - column: { name: car_model, value: "Corolla" }
+              - column: { name: license_plate, value: "AA1234BB" }
+              - column: { name: issue_description, value: "Engine diagnostics and oil change" }
+              - column: { name: status, value: "IN_PROGRESS" }
+              - column: { name: created_at, valueDate: "2026-09-17T09:30:00" }
+        - insert:
+            tableName: repair_orders
+            columns:
+              - column: { name: customer_name, value: "Iryna Melnyk" }
+              - column: { name: phone, value: "+380671234567" }
+              - column: { name: car_brand, value: "Skoda" }
+              - column: { name: car_model, value: "Octavia" }
+              - column: { name: license_plate, value: "BC7788CE" }
+              - column: { name: issue_description, value: "Front brake pads replacement" }
+              - column: { name: status, value: "NEW" }
+              - column: { name: created_at, valueDate: "2026-09-17T10:15:00" }
