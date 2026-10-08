@@ -6,9 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import com.example.demo.annotation.ValidRepairDescription;
 
 import java.time.LocalDateTime;
-
+@ValidRepairDescription
 public record RepairOrderDto(
         Long id,
         @NotBlank @Size(max = 100) String customerName,

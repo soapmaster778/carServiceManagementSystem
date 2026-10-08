@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.annotation.CurrentUsername;
 import com.example.demo.dto.RepairOrderDto;
 import com.example.demo.service.RepairOrderService;
 
@@ -9,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+
+import com.example.demo.annotation.CreatedPost;
 
 @RestController
 @RequestMapping("/api/repair-orders")
@@ -26,9 +30,9 @@ public class RepairOrderRestController {
         return service.findById(id);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public RepairOrderDto create(@Valid @RequestBody RepairOrderDto dto) {
+    @CreatedPost
+    public RepairOrderDto create(
+            @Valid @RequestBody RepairOrderDto dto) {
         return service.create(dto);
     }
 
@@ -41,5 +45,12 @@ public class RepairOrderRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @GetMapping("/current-operator")
+    public Map<String, String> currentOperator(
+            @CurrentUsername String username) {
+
+        return Map.of("username", username);
     }
 }
