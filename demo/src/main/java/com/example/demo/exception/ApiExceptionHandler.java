@@ -10,6 +10,11 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice(basePackages = "com.example.demo.controller")
 public class ApiExceptionHandler {
+    @ExceptionHandler(WorkshopReadOnlyException.class)
+    ProblemDetail maintenance(WorkshopReadOnlyException exception) {
+        return problem(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
+
     @ExceptionHandler(RepairOrderNotFoundException.class)
     ProblemDetail notFound(RepairOrderNotFoundException exception) {
         return problem(HttpStatus.NOT_FOUND, exception.getMessage());

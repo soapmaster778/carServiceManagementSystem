@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.annotation.NormalizeLicensePlate;
+import com.example.demo.annotation.RetryTransientRead;
+import com.example.demo.annotation.WorkshopWritable;
 import com.example.demo.dto.RepairOrderDto;
 import com.example.demo.entity.RepairOrder;
 import com.example.demo.exception.DuplicateLicensePlateException;
@@ -21,16 +24,25 @@ public class RepairOrderService {
     private final RepairOrderRepository repository;
     private final RepairOrderMapper mapper;
 
+    @RetryTransientRead
     public List<RepairOrderDto> findAll() {
         return repository.findAll().stream().map(mapper::toDto).toList();
     }
 
+    @RetryTransientRead
     public RepairOrderDto findById(Long id) {
         return mapper.toDto(getEntity(id));
     }
 
+
+    public List<RepairOrderDto> findByIds(List<Long> ids) {
+        return ids.stream().map(id -> this.findById(id)).toList();
+    }
+
     @Transactional
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @WorkshopWritable
+    @NormalizeLicensePlate
     public RepairOrderDto create(RepairOrderDto dto) {
         if (repository.existsByLicensePlateIgnoreCase(dto.licensePlate())) {
             throw new DuplicateLicensePlateException(dto.licensePlate());
@@ -43,6 +55,8 @@ public class RepairOrderService {
 
     @Transactional
     @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    @WorkshopWritable
+    @NormalizeLicensePlate
     public RepairOrderDto update(Long id, RepairOrderDto dto) {
         RepairOrder entity = getEntity(id);
         if (repository.existsByLicensePlateIgnoreCaseAndIdNot(dto.licensePlate(), id)) {
@@ -55,6 +69,7 @@ public class RepairOrderService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
+    @WorkshopWritable
     public void delete(Long id) {
         repository.delete(getEntity(id));
     }
