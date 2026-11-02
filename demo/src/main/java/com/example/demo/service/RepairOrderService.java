@@ -23,6 +23,7 @@ import java.util.List;
 public class RepairOrderService {
     private final RepairOrderRepository repository;
     private final RepairOrderMapper mapper;
+    private final RepairOrderEstimateService estimateService;
 
     @RetryTransientRead
     public List<RepairOrderDto> findAll() {
@@ -36,7 +37,7 @@ public class RepairOrderService {
 
 
     public List<RepairOrderDto> findByIds(List<Long> ids) {
-        return ids.stream().map(id -> this.findById(id)).toList();
+        return ids.stream().map(this::findById).toList();
     }
 
     @Transactional
@@ -50,7 +51,9 @@ public class RepairOrderService {
         RepairOrder entity = mapper.toEntity(dto);
         entity.setId(null);
         entity.setCreatedAt(null);
-        return mapper.toDto(repository.save(entity));
+        RepairOrderDto createdOrder = mapper.toDto(repository.save(entity));
+        estimateService.notifyOrderCreated(createdOrder);
+        return createdOrder;
     }
 
     @Transactional

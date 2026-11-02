@@ -31,6 +31,9 @@ class RepairOrderServiceTest {
     @Mock
     private RepairOrderMapper mapper;
 
+    @Mock
+    private RepairOrderEstimateService estimateService;
+
     @InjectMocks
     private RepairOrderService service;
 
@@ -115,6 +118,7 @@ class RepairOrderServiceTest {
         assertThat(result).isEqualTo(expected);
         verify(repository).existsByLicensePlateIgnoreCase("KA4455IT");
         verify(mapper).toEntity(input);
+        verify(estimateService).notifyOrderCreated(expected);
     }
 
     @Test
@@ -129,6 +133,7 @@ class RepairOrderServiceTest {
         verify(repository).existsByLicensePlateIgnoreCase("AA1234BB");
         verify(repository, never()).save(any());
         verifyNoInteractions(mapper);
+        verifyNoInteractions(estimateService);
     }
 
     @Test
