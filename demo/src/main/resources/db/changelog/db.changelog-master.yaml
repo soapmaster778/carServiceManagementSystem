@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/002-seed-repair-orders.yaml
   - include:
       file: db/changelog/changes/003-localize-seed-repair-orders.yaml
+  - include:
+      file: db/changelog/changes/004-create-quartz-tables.yaml

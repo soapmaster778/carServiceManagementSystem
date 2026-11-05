@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-quartz-tables
+      author: Evgen
+      changes:
+        - sqlFile:
+            path: org/quartz/impl/jdbcjobstore/tables_h2.sql
+            relativeToChangelogFile: false
+            splitStatements: true
