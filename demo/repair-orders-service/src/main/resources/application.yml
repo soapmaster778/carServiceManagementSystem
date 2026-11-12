@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: repair-orders-service
+  datasource:
+    url: jdbc:h2:file:./data/carservice
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ''
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: car-service-ui
+            client-secret: car-service-secret
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8082/realms/car-service/protocol/openid-connect/auth
+            token-uri: http://localhost:8082/realms/car-service/protocol/openid-connect/token
+            user-info-uri: http://localhost:8082/realms/car-service/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8082/realms/car-service/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8082/realms/car-service/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8082/realms/car-service
+  thymeleaf:
+    cache: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    overwrite-existing-jobs: false
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: CarServiceScheduler
+            instanceId: AUTO
+          jobStore:
+            tablePrefix: QRTZ_
+
+server:
+  port: 8081
+
+workshop:
+  maintenance:
+    read-only: false

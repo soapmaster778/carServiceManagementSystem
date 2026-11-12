@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: repair-estimates-service
+
+server:
+  port: 8083

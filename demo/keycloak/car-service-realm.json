@@ -17,7 +17,7 @@
       "secret": "car-service-secret",
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
-      "redirectUris": ["http://localhost:8080/login/oauth2/code/keycloak"],
+      "redirectUris": ["http://localhost:8081/login/oauth2/code/keycloak"],
       "webOrigins": ["http://localhost:8080"],
       "protocolMappers": [{
         "name": "realm roles",
