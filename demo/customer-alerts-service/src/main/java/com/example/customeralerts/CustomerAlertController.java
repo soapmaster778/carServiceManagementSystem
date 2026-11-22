@@ -2,11 +2,14 @@ package com.example.customeralerts;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/customer-alerts")
@@ -21,5 +24,10 @@ public class CustomerAlertController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public CustomerAlertResponse send(@Valid @RequestBody CustomerAlertRequest request) {
         return service.send(request);
+    }
+
+    @GetMapping
+    public List<CustomerAlertView> findAll() {
+        return service.findAll();
     }
 }

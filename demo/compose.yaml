@@ -1,4 +1,41 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  repair-orders-service:
+    build: ./repair-orders-service
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8081:8081"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  customer-alerts-service:
+    build: ./customer-alerts-service
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    ports:
+      - "8084:8084"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.3.3
     command: start-dev --import-realm
@@ -9,3 +46,6 @@ services:
       - "8082:8080"
     volumes:
       - ./keycloak/car-service-realm.json:/opt/keycloak/data/import/car-service-realm.json:ro
+
+volumes:
+  rabbitmq-data:

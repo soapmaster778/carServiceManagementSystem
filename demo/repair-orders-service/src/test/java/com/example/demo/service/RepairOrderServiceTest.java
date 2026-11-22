@@ -7,12 +7,15 @@ import com.example.demo.exception.DuplicateLicensePlateException;
 import com.example.demo.exception.RepairOrderNotFoundException;
 import com.example.demo.mapper.RepairOrderMapper;
 import com.example.demo.repository.RepairOrderRepository;
+import com.example.events.RepairEventType;
+import com.example.events.RepairOrderEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +35,7 @@ class RepairOrderServiceTest {
     private RepairOrderMapper mapper;
 
     @Mock
-    private RepairOrderEstimateService estimateService;
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private RepairOrderService service;
@@ -118,7 +121,10 @@ class RepairOrderServiceTest {
         assertThat(result).isEqualTo(expected);
         verify(repository).existsByLicensePlateIgnoreCase("KA4455IT");
         verify(mapper).toEntity(input);
-        verify(estimateService).notifyOrderCreated(expected);
+        ArgumentCaptor<RepairOrderEvent> event = ArgumentCaptor.forClass(RepairOrderEvent.class);
+        verify(eventPublisher).publishEvent(event.capture());
+        assertThat(event.getValue().type()).isEqualTo(RepairEventType.REPAIR_ORDER_CREATED);
+        assertThat(event.getValue().repairOrderId()).isEqualTo(10L);
     }
 
     @Test
@@ -133,7 +139,7 @@ class RepairOrderServiceTest {
         verify(repository).existsByLicensePlateIgnoreCase("AA1234BB");
         verify(repository, never()).save(any());
         verifyNoInteractions(mapper);
-        verifyNoInteractions(estimateService);
+        verifyNoInteractions(eventPublisher);
     }
 
     @Test
