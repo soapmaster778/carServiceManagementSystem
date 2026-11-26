@@ -1,4 +1,6 @@
 package com.example.demo.exception;
+import com.example.demo.repairinfo.RepairInfoNotFoundException;
+import com.example.demo.repairinfo.RepairInfoUnavailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +12,15 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice(basePackages = "com.example.demo.controller")
 public class ApiExceptionHandler {
+    @ExceptionHandler(RepairInfoNotFoundException.class)
+    ProblemDetail repairInfoNotFound(RepairInfoNotFoundException exception) {
+        return problem(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(RepairInfoUnavailableException.class)
+    ProblemDetail repairInfoUnavailable(RepairInfoUnavailableException exception) {
+        return problem(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+    }
     @ExceptionHandler(WorkshopReadOnlyException.class)
     ProblemDetail maintenance(WorkshopReadOnlyException exception) {
         return problem(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());

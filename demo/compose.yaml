@@ -20,11 +20,22 @@ services:
     build: ./repair-orders-service
     environment:
       RABBITMQ_HOST: rabbitmq
+      REPAIR_CATALOG_HTTP_URL: http://repair-estimates-service:8083
+      REPAIR_CATALOG_GRPC_HOST: repair-estimates-service
+      REPAIR_CATALOG_TRANSPORT: ${REPAIR_CATALOG_TRANSPORT:-http}
     ports:
       - "8081:8081"
     depends_on:
       rabbitmq:
         condition: service_healthy
+
+  repair-estimates-service:
+    build: ./repair-estimates-service
+    environment:
+      REPAIR_GRPC_ENABLED: "true"
+    ports:
+      - "8083:8083"
+      - "9090:9090"
 
   customer-alerts-service:
     build: ./customer-alerts-service

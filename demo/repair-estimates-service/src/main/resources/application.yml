@@ -4,3 +4,8 @@ spring:
 
 server:
   port: 8083
+
+repair:
+  grpc:
+    enabled: ${REPAIR_GRPC_ENABLED:false}
+    port: ${REPAIR_GRPC_PORT:9090}

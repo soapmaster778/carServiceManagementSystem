@@ -21,6 +21,7 @@
 
     <modules>
         <module>common-events</module>
+        <module>repair-contract</module>
         <module>repair-orders-service</module>
         <module>repair-estimates-service</module>
         <module>customer-alerts-service</module>

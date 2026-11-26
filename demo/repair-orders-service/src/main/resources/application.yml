@@ -64,3 +64,13 @@ server:
 workshop:
   maintenance:
     read-only: false
+
+repair:
+  catalog:
+    transport: ${REPAIR_CATALOG_TRANSPORT:http}
+    http-url: ${REPAIR_CATALOG_HTTP_URL:http://localhost:8083}
+    grpc-host: ${REPAIR_CATALOG_GRPC_HOST:localhost}
+    grpc-port: ${REPAIR_CATALOG_GRPC_PORT:9090}
+    connect-timeout: ${REPAIR_CATALOG_CONNECT_TIMEOUT:2s}
+    read-timeout: ${REPAIR_CATALOG_READ_TIMEOUT:3s}
+    grpc-deadline: ${REPAIR_CATALOG_GRPC_DEADLINE:3s}

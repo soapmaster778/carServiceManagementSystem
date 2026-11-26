@@ -12,6 +12,8 @@
     <artifactId>repair-orders-service</artifactId>
     <name>Repair Orders Service</name>
     <dependencies>
+        <dependency><groupId>org.park</groupId><artifactId>repair-contract</artifactId><version>${project.version}</version></dependency>
+        <dependency><groupId>io.grpc</groupId><artifactId>grpc-netty-shaded</artifactId><version>1.83.1</version></dependency>
         <dependency><groupId>org.park</groupId><artifactId>common-events</artifactId><version>${project.version}</version></dependency>
         <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-aspectj</artifactId></dependency>
         <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-thymeleaf</artifactId></dependency>

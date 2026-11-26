@@ -1,0 +1,16 @@
+syntax = "proto3";
+package repair.catalog;
+option java_package = "com.example.repaircontract";
+option java_multiple_files = true;
+
+service RepairCatalog {
+  rpc GetRepairInfo (RepairInfoRequest) returns (RepairInfoResponse);
+}
+
+message RepairInfoRequest { string code = 1; }
+message RepairInfoResponse {
+  string code = 1;
+  string parts_price = 2;
+  string labor_price = 3;
+  int32 duration_minutes = 4;
+}
